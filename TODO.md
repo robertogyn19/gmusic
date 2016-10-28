@@ -1,5 +1,5 @@
 ## TODO
 
-- Add create/edit playlist
+- Add edit playlist
 - Add search
 - Add tests

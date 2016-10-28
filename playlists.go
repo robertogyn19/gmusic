@@ -72,3 +72,86 @@ func (g *GMusic) ListPlaylistEntries() ([]*PlaylistEntry, error) {
 	}
 	return data.Data.Items, nil
 }
+
+type CreateMutations struct {
+	Mutations []map[string]interface{} `json:"mutations"`
+}
+
+type CreatePlaylistParams struct {
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Public      bool   `json:"-"`
+}
+
+type CreatePlaylistResponse struct {
+	ID           string `json:"id"`
+	ClientID     string `json:"client_id"`
+	ResponseCode string `json:"response_code"`
+}
+
+/*
+Params example:
+{
+	"name": "playlist name",
+	"description": "playlist description",
+	"sharedState": "PRIVATE | PUBLIC",
+	"creationTimestamp": 0,
+	"deleted": false,
+	"lastModifiedTimestamp": -1,
+	"type": "USER_GENERATED",
+}
+
+Response example:
+{
+  "mutate_response": [
+    {
+      "id": "24e6e72e-0565-40a6-8523-12e1c9090241",
+      "client_id": "",
+      "response_code": "OK"
+    }
+  ]
+}
+*/
+func (g *GMusic) CreatePlaylist(cparams CreatePlaylistParams) (CreatePlaylistResponse, error) {
+	ss := "PRIVATE"
+
+	if cparams.Public {
+		ss = "PUBLIC"
+	}
+
+	params := map[string]interface{}{
+		"name":                  cparams.Name,
+		"description":           cparams.Description,
+		"sharedState":           ss,
+		"creationTimestamp":     0,
+		"deleted":               false,
+		"lastModifiedTimestamp": -1,
+		"type":                  "USER_GENERATED",
+	}
+
+	entry := map[string]interface{}{
+		"create": params,
+	}
+
+	array := make([]map[string]interface{}, 0)
+	array = append(array, entry)
+
+	mutations := CreateMutations{Mutations: array}
+	var playlist CreatePlaylistResponse
+
+	r, err := g.sjRequest("POST", "playlistbatch", mutations)
+
+	if err != nil {
+		return playlist, err
+	}
+
+	defer r.Body.Close()
+
+	var data map[string][]CreatePlaylistResponse
+
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		return playlist, err
+	}
+
+	return data["mutate_response"][0], nil
+}
