@@ -2,8 +2,6 @@ package gmusic
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"fmt"
 )
 
 type ListPlaylists struct {
@@ -80,35 +78,38 @@ type CreateMutations struct {
 }
 
 type CreatePlaylistParams struct {
-	//CreationTimestamp     int    `json:"creationTimestamp"`
-	//Deleted               bool   `json:"deleted"`
-	//LastModifiedTimestamp int    `json:"lastModifiedTimestamp"`
-	Name                  string `json:"name"`
-	Description           string `json:"description,omitempty"`
-	//Type                  string `json:"type"`
-	Public                bool   `json:"-"`
-	//ShareState            string `json:"-"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Public      bool   `json:"-"`
 }
 
 type CreatePlaylistResponse struct {
-	ID                string        `json:"id"`
-	ShareToken        string        `json:"shareToken"`
-	CreationTimestamp int64         `json:"creationTimestamp"`
-	Track             []interface{} `json:"track"`
+	ID           string `json:"id"`
+	ClientID     string `json:"client_id"`
+	ResponseCode string `json:"response_code"`
 }
 
 /*
 Params example:
 {
-
+	"name": "playlist name",
+	"description": "playlist description",
+	"sharedState": "PRIVATE | PUBLIC",
+	"creationTimestamp": 0,
+	"deleted": false,
+	"lastModifiedTimestamp": -1,
+	"type": "USER_GENERATED",
 }
 
 Response example:
 {
-	"id": "10bff02f-e438-4bfa-96df-2462da8d5363",
-	"sharedToken": "AMaBXynRN-7Co5sCud2a5ff30UKCKtZHBiEKWFna9QpYHH1LYl==",
-	"track": [],
-	"creationTimestamp":1477579862830000
+  "mutate_response": [
+    {
+      "id": "24e6e72e-0565-40a6-8523-12e1c9090241",
+      "client_id": "",
+      "response_code": "OK"
+    }
+  ]
 }
 */
 func (g *GMusic) CreatePlaylist(cparams CreatePlaylistParams) (CreatePlaylistResponse, error) {
@@ -119,13 +120,13 @@ func (g *GMusic) CreatePlaylist(cparams CreatePlaylistParams) (CreatePlaylistRes
 	}
 
 	params := map[string]interface{}{
-		"name": cparams.Name,
-		"description": cparams.Description,
-		"sharedState": ss,
-		"creationTimestamp": 0,
-		"deleted": false,
+		"name":                  cparams.Name,
+		"description":           cparams.Description,
+		"sharedState":           ss,
+		"creationTimestamp":     0,
+		"deleted":               false,
 		"lastModifiedTimestamp": -1,
-		"type": "USER_GENERATED",
+		"type":                  "USER_GENERATED",
 	}
 
 	entry := map[string]interface{}{
@@ -144,17 +145,13 @@ func (g *GMusic) CreatePlaylist(cparams CreatePlaylistParams) (CreatePlaylistRes
 		return playlist, err
 	}
 
-	d, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 
-	fmt.Println()
-	fmt.Println("--> body", string(d))
-	fmt.Println()
+	var data map[string][]CreatePlaylistResponse
 
-	//
-	//defer r.Body.Close()
-	//if err := json.NewDecoder(r.Body).Decode(&playlist); err != nil {
-	//	return nil, err
-	//}
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		return playlist, err
+	}
 
-	return playlist, nil
+	return data["mutate_response"][0], nil
 }

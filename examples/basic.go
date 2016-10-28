@@ -22,6 +22,11 @@ func main() {
 	}
 
 	cpp := gmusic.CreatePlaylistParams{Name: "new playlist with gmusic"}
-	gm.CreatePlaylist(cpp)
-	log.Printf("Logged as %s", gm.DeviceID)
+	pl, err := gm.CreatePlaylist(cpp)
+
+	if err != nil {
+		log.Fatal("Creating playlist error ", err)
+	}
+
+	log.Println("Playlist id:", pl.ID)
 }
