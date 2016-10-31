@@ -1,4 +1,4 @@
-package main
+package examples
 
 import (
 	"log"
@@ -7,7 +7,7 @@ import (
 	"github.com/robertogyn19/gmusic"
 )
 
-func main() {
+func Login() *gmusic.GMusic {
 	user := os.Getenv("GOOGLE_USER")
 	pass := os.Getenv("GOOGLE_PASS")
 
@@ -21,12 +21,5 @@ func main() {
 		log.Fatal("Login error ", err)
 	}
 
-	cpp := gmusic.CreatePlaylistParams{Name: "new playlist with gmusic"}
-	pl, err := gm.CreatePlaylist(cpp)
-
-	if err != nil {
-		log.Fatal("Creating playlist error ", err)
-	}
-
-	log.Println("Playlist id:", pl.ID)
+	return gm
 }
