@@ -27,20 +27,20 @@ type Track struct {
 	ClientId              string   `json:"clientId"`
 	CreationTimestamp     string   `json:"creationTimestamp"`
 	Deleted               bool     `json:"deleted"`
-	DiscNumber            float64  `json:"discNumber"`
+	DiscNumber            int      `json:"discNumber"`
 	DurationMillis        string   `json:"durationMillis"`
 	EstimatedSize         string   `json:"estimatedSize"`
 	ID                    string   `json:"id"`
 	Kind                  string   `json:"kind"`
 	LastModifiedTimestamp string   `json:"lastModifiedTimestamp"`
 	Nid                   string   `json:"nid"`
-	PlayCount             float64  `json:"playCount"`
+	PlayCount             int      `json:"playCount"`
 	RecentTimestamp       string   `json:"recentTimestamp"`
 	StoreId               string   `json:"storeId"`
 	Title                 string   `json:"title"`
-	TrackNumber           float64  `json:"trackNumber"`
+	TrackNumber           int      `json:"trackNumber"`
 	TrackType             string   `json:"trackType"`
-	Year                  float64  `json:"year"`
+	Year                  int      `json:"year"`
 }
 
 func (g *GMusic) ListTracks() ([]*Track, error) {
