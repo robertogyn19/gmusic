@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+
+	"github.com/google/go-querystring/query"
 )
 
 type SettingsData struct {
@@ -58,8 +60,18 @@ func (g *GMusic) request(method, url string, data interface{}, client *http.Clie
 			}
 		}
 
+		if method == "GET" {
+			params, _ := query.Values(data)
+			url = fmt.Sprintf("%s?%s", url, params.Encode())
+		}
+
+		fmt.Println()
+		fmt.Println("---------------> url", url)
+		fmt.Println()
+
 		body = buf
 	}
+
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err

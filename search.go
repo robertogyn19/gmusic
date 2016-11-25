@@ -19,10 +19,10 @@ type SearchResponse struct {
 
 type SearchEntriesResponse struct {
 	Type               string   `json:"type"`
-	Artist             Artist   `json:"artist"`
-	Album              Album    `json:"album"`
-	Track              Track    `json:"track"`
-	Playlist           Playlist `json:"playlist"`
+	Artist             Artist   `json:"artist,omitempty"`
+	Album              Album    `json:"album,omitempty"`
+	Track              Track    `json:"track,omitempty"`
+	Playlist           Playlist `json:"playlist,omitempty"`
 	BestResult         bool     `json:"best_result"`
 	NavigationalResult bool     `json:"navigational_result"`
 }
@@ -54,7 +54,6 @@ type Artist struct {
 	Name                 string               `json:"name"`
 	ArtistArtRef         string               `json:"artistArtRef"`
 	ArtistArtRefs        []ArtRefs            `json:"artRefs"`
-	ArtistID             string               `json:"artistId"`
 	ArtistBioAttribution ArtistBioAttribution `json:"artist_bio_attribution"`
 	TopTracks            []Track              `json:"topTracks"`
 }
