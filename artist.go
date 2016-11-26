@@ -6,11 +6,13 @@ type ArtistInfoParams struct {
 	ID            string `url:"nid"`
 	IncludeAlbums bool   `url:"include-albums"`
 	MaxTopTracts  int    `url:"num-top-tracks"`
-	MaxRelArtist  int    `url:"max-related-artists"`
+	MaxRelArtist  int    `url:"num-related-artists"`
+	Alt           string `url:"alt"`
 }
 
 func (g *GMusic) GetArtistInfo(params ArtistInfoParams) (Artist, error) {
 	art := Artist{}
+	params.Alt = "json"
 
 	r, err := g.sjRequest("GET", "fetchartist", params)
 

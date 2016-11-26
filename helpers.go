@@ -63,13 +63,9 @@ func (g *GMusic) request(method, url string, data interface{}, client *http.Clie
 		if method == "GET" {
 			params, _ := query.Values(data)
 			url = fmt.Sprintf("%s?%s", url, params.Encode())
+		} else {
+			body = buf
 		}
-
-		fmt.Println()
-		fmt.Println("---------------> url", url)
-		fmt.Println()
-
-		body = buf
 	}
 
 	req, err := http.NewRequest(method, url, body)
@@ -77,8 +73,10 @@ func (g *GMusic) request(method, url string, data interface{}, client *http.Clie
 		return nil, err
 	}
 
-	req.Header.Add("Authorization", fmt.Sprintf("GoogleLogin auth=%s", g.Auth))
+	auth := fmt.Sprintf("GoogleLogin auth=%s", g.Auth)
+	req.Header.Add("Authorization", auth)
 	req.Header.Add("Content-Type", "application/json")
+
 	if client == nil {
 		client = http.DefaultClient
 	}
@@ -87,7 +85,7 @@ func (g *GMusic) request(method, url string, data interface{}, client *http.Clie
 		return nil, err
 	}
 	if resp.StatusCode != http.StatusOK {
-		resp.Body.Close()
+		defer resp.Body.Close()
 		return nil, fmt.Errorf("gmusic: %s", resp.Status)
 	}
 	return resp, nil

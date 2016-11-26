@@ -12,6 +12,13 @@ const (
 	sjURL                   = "https://www.googleapis.com/sj/v2.4/"
 )
 
+const (
+	TRACK_TYPE    = "1"
+	ARTIST_TYPE   = "2"
+	ALBUM_TYPE    = "3"
+	PLAYLIST_TYPE = "4"
+)
+
 type GMusic struct {
 	DeviceID string
 	Auth     string
