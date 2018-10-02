@@ -1,5 +1,5 @@
-// Package gmusic provides methods to list and play music from Google
-// Play Music.
+// Package gmusic provides methods to list music, playlists, artists, etc
+// from Google Play Music.
 package gmusic
 
 import (
