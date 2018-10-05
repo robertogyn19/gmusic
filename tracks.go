@@ -2,6 +2,8 @@ package gmusic
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
 )
 
 type ListTracks struct {
@@ -47,7 +49,7 @@ func (g *GMusic) ListTracks() ([]*Track, error) {
 	var tracks []*Track
 	var next string
 	for {
-		r, err := g.sjRequest("POST", "trackfeed", struct {
+		r, err := g.sjRequest(http.MethodPost, "trackfeed", struct {
 			StartToken string `json:"start-token"`
 		}{
 			StartToken: next,
@@ -57,12 +59,15 @@ func (g *GMusic) ListTracks() ([]*Track, error) {
 		}
 		var data ListTracks
 		defer r.Body.Close()
-		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+
+		body, _ := ioutil.ReadAll(r.Body)
+		if err := json.Unmarshal(body, &data); err != nil {
 			return nil, err
 		}
+
 		tracks = append(tracks, data.Data.Items...)
 		next = data.NextPageToken
-		if next == "" {
+		if next == "" || len(tracks) >= 1000 {
 			break
 		}
 	}
