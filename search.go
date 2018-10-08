@@ -3,8 +3,26 @@ package gmusic
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/google/go-querystring/query"
+)
+
+type SearchType string
+
+// 1: Song, 2: Artist, 3: Album, 4: Playlist, 5: Genre,
+// 6: Station, 7: Situation, 8: Video, 9: Podcast Series
+const (
+	SongType      SearchType = "1"
+	ArtistType    SearchType = "2"
+	AlbumType     SearchType = "3"
+	PlaylistType  SearchType = "4"
+	GenreType     SearchType = "5"
+	StationType   SearchType = "6"
+	SituationType SearchType = "7"
+	VideoType     SearchType = "8"
+	PodcastType   SearchType = "9"
 )
 
 type SearchParams struct {
@@ -13,18 +31,30 @@ type SearchParams struct {
 }
 
 type SearchResponse struct {
-	Kind    string                  `json:"kind"`
-	Entries []SearchEntriesResponse `json:"entries"`
+	Kind          string          `json:"kind"`
+	ClusterDetail []ClusterDetail `json:"clusterDetail"`
+}
+
+type ClusterDetail struct {
+	ResultToken string                  `json:"resultToken"`
+	Cluster     ClusterResult           `json:"cluster"`
+	Entries     []SearchEntriesResponse `json:"entries"`
+}
+
+type ClusterResult struct {
+	Type     SearchType `json:"type"`
+	Category string     `json:"category"`
+	Id       string     `json:"search_genre"`
 }
 
 type SearchEntriesResponse struct {
-	Type               string   `json:"type"`
-	Artist             Artist   `json:"artist,omitempty"`
-	Album              Album    `json:"album,omitempty"`
-	Track              Track    `json:"track,omitempty"`
-	Playlist           Playlist `json:"playlist,omitempty"`
-	BestResult         bool     `json:"best_result"`
-	NavigationalResult bool     `json:"navigational_result"`
+	Type               SearchType `json:"type"`
+	Artist             Artist     `json:"artist,omitempty"`
+	Album              Album      `json:"album,omitempty"`
+	Track              Track      `json:"track,omitempty"`
+	Playlist           Playlist   `json:"playlist,omitempty"`
+	BestResult         bool       `json:"best_result"`
+	NavigationalResult bool       `json:"navigational_result"`
 }
 
 /*
@@ -115,6 +145,10 @@ type DescriptionAttribution struct {
 	LicenseURL   string `json:"license_url"`
 }
 
+const (
+	ctParam = "1,2,3,4,5,6,7,8,9"
+)
+
 func (g *GMusic) Search(opts SearchParams) (SearchResponse, error) {
 	var sr SearchResponse
 
@@ -128,13 +162,19 @@ func (g *GMusic) Search(opts SearchParams) (SearchResponse, error) {
 		return sr, err
 	}
 
-	r, err := g.sjRequest("GET", fmt.Sprintf("query?%s", params.Encode()), nil)
+	url := fmt.Sprintf("query?%s", params.Encode())
+	url = fmt.Sprintf("%s&ct=%s&ic=true", url, ctParam)
+	r, err := g.sjRequest(http.MethodGet, url, nil)
 
 	if err != nil {
 		return sr, err
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&sr); err != nil {
+	reader := r.Body
+	body, _ := ioutil.ReadAll(reader)
+	defer reader.Close()
+
+	if err := json.Unmarshal(body, &sr); err != nil {
 		return sr, err
 	}
 

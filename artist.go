@@ -1,6 +1,9 @@
 package gmusic
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"net/http"
+)
 
 type ArtistInfoParams struct {
 	ID            string `url:"nid"`
@@ -14,7 +17,7 @@ func (g *GMusic) GetArtistInfo(params ArtistInfoParams) (Artist, error) {
 	art := Artist{}
 	params.Alt = "json"
 
-	r, err := g.sjRequest("GET", "fetchartist", params)
+	r, err := g.sjRequest(http.MethodGet, "fetchartist", params)
 
 	if err != nil {
 		return art, err
