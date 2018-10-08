@@ -2,6 +2,7 @@ package gmusic
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -30,4 +31,32 @@ func (g *GMusic) GetArtistInfo(params ArtistInfoParams) (Artist, error) {
 	}
 
 	return art, nil
+}
+
+func (g *GMusic) SearchArtists(terms []string) ([]Artist, error) {
+	list := make([]Artist, 0)
+
+	for _, artist := range terms {
+		searchParam := SearchParams{
+			Term:        artist,
+			MaxResults:  1,
+			SearchTypes: []SearchType{ArtistType},
+		}
+
+		response, err := g.Search(searchParam)
+		if err != nil {
+			log.Printf("could not search for artist %s, error: %v", artist, err)
+			return list, err
+		}
+
+		for _, detail := range response.ClusterDetail {
+			if detail.Cluster.Type == ArtistType {
+				for _, entry := range detail.Entries {
+					list = append(list, entry.Artist)
+				}
+			}
+		}
+	}
+
+	return list, nil
 }

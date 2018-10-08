@@ -5,9 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/robertogyn19/gmusic"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var playlistsListCmd = &cobra.Command{
@@ -21,14 +19,7 @@ func init() {
 }
 
 func playlistsListCmdRun(_ *cobra.Command, _ []string) {
-	email := viper.GetString("email")
-	pass := viper.GetString("password")
-
-	conn, err := gmusic.Login(email, pass)
-	if err != nil {
-		log.Printf("could not login with email %s, error: %v", email, err)
-		os.Exit(1)
-	}
+	conn := getConn()
 
 	playlists, err := conn.ListPlaylists()
 	if err != nil {
