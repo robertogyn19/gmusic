@@ -4,10 +4,26 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/robertogyn19/gmusic"
+	"github.com/spf13/viper"
 )
+
+func getConn() *gmusic.GMusic {
+	email := viper.GetString("email")
+	pass := viper.GetString("password")
+
+	conn, err := gmusic.Login(email, pass)
+	if err != nil {
+		log.Printf("could not login with email %s, error: %v", email, err)
+		os.Exit(1)
+	}
+
+	return conn
+}
 
 func playlistsToTable(playlists []*gmusic.Playlist, columns []string) *bytes.Buffer {
 	out := bytes.NewBufferString("")

@@ -5,29 +5,15 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/google/go-querystring/query"
 )
 
-type SearchType string
-
-// 1: Song, 2: Artist, 3: Album, 4: Playlist, 5: Genre,
-// 6: Station, 7: Situation, 8: Video, 9: Podcast Series
-const (
-	SongType      SearchType = "1"
-	ArtistType    SearchType = "2"
-	AlbumType     SearchType = "3"
-	PlaylistType  SearchType = "4"
-	GenreType     SearchType = "5"
-	StationType   SearchType = "6"
-	SituationType SearchType = "7"
-	VideoType     SearchType = "8"
-	PodcastType   SearchType = "9"
-)
-
 type SearchParams struct {
-	Term       string `url:"q"`
-	MaxResults int    `url:"max-results"`
+	Term        string       `url:"q"`
+	MaxResults  int          `url:"max-results"`
+	SearchTypes []SearchType `url:"-"`
 }
 
 type SearchResponse struct {
@@ -163,7 +149,12 @@ func (g *GMusic) Search(opts SearchParams) (SearchResponse, error) {
 	}
 
 	url := fmt.Sprintf("query?%s", params.Encode())
-	url = fmt.Sprintf("%s&ct=%s&ic=true", url, ctParam)
+	url = fmt.Sprintf("%s&ic=true", url)
+	if len(opts.SearchTypes) != 0 {
+		url = fmt.Sprintf("%s&ct=%v", url, join(opts.SearchTypes))
+	} else {
+		url = fmt.Sprintf("%s&ct=%s", url, ctParam)
+	}
 	r, err := g.sjRequest(http.MethodGet, url, nil)
 
 	if err != nil {
@@ -179,4 +170,14 @@ func (g *GMusic) Search(opts SearchParams) (SearchResponse, error) {
 	}
 
 	return sr, nil
+}
+
+func join(types []SearchType) string {
+	list := make([]string, len(types))
+
+	for i, t := range types {
+		list[i] = string(t)
+	}
+
+	return strings.Join(list, ",")
 }
