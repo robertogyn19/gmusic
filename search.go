@@ -9,20 +9,20 @@ import (
 	"github.com/google/go-querystring/query"
 )
 
-type Type string
+type SearchType string
 
 // 1: Song, 2: Artist, 3: Album, 4: Playlist, 5: Genre,
 // 6: Station, 7: Situation, 8: Video, 9: Podcast Series
 const (
-	SongType      Type = "1"
-	ArtistType    Type = "2"
-	AlbumType     Type = "3"
-	PlaylistType  Type = "4"
-	GenreType     Type = "5"
-	StationType   Type = "6"
-	SituationType Type = "7"
-	VideoType     Type = "8"
-	PodcastType   Type = "9"
+	SongType      SearchType = "1"
+	ArtistType    SearchType = "2"
+	AlbumType     SearchType = "3"
+	PlaylistType  SearchType = "4"
+	GenreType     SearchType = "5"
+	StationType   SearchType = "6"
+	SituationType SearchType = "7"
+	VideoType     SearchType = "8"
+	PodcastType   SearchType = "9"
 )
 
 type SearchParams struct {
@@ -42,19 +42,19 @@ type ClusterDetail struct {
 }
 
 type ClusterResult struct {
-	Type     Type   `json:"type"`
-	Category string `json:"category"`
-	Id       string `json:"search_genre"`
+	Type     SearchType `json:"type"`
+	Category string     `json:"category"`
+	Id       string     `json:"search_genre"`
 }
 
 type SearchEntriesResponse struct {
-	Type               Type     `json:"type"`
-	Artist             Artist   `json:"artist,omitempty"`
-	Album              Album    `json:"album,omitempty"`
-	Track              Track    `json:"track,omitempty"`
-	Playlist           Playlist `json:"playlist,omitempty"`
-	BestResult         bool     `json:"best_result"`
-	NavigationalResult bool     `json:"navigational_result"`
+	Type               SearchType `json:"type"`
+	Artist             Artist     `json:"artist,omitempty"`
+	Album              Album      `json:"album,omitempty"`
+	Track              Track      `json:"track,omitempty"`
+	Playlist           Playlist   `json:"playlist,omitempty"`
+	BestResult         bool       `json:"best_result"`
+	NavigationalResult bool       `json:"navigational_result"`
 }
 
 /*
