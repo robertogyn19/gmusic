@@ -79,5 +79,5 @@ func playlistsCreateCmdRun(cmd *cobra.Command, _ []string) {
 		os.Exit(1)
 	}
 
-	log.Printf("%d sons was successfully added to playlist %s", len(trackIds), playlistName)
+	log.Printf("%d songs were successfully added to playlist %s", len(trackIds), playlistName)
 }
