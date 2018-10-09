@@ -17,8 +17,10 @@ var RootCmd = &cobra.Command{
 	},
 }
 
-func initConfig() {
+var verbose bool
 
+func initConfig() {
+	verbose = viper.GetBool("verbose")
 }
 
 func init() {
@@ -37,6 +39,13 @@ func init() {
 			Desc:  "password",
 			Value: "",
 			Short: "p",
+		},
+		{
+
+			Name:  "verbose",
+			Desc:  "verbose",
+			Value: false,
+			Short: "v",
 		},
 	}
 

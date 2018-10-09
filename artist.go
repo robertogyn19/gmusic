@@ -58,5 +58,22 @@ func (g *GMusic) SearchArtists(terms []string) ([]Artist, error) {
 		}
 	}
 
-	return list, nil
+	var err error
+	for i, artist := range list {
+		params := ArtistInfoParams{
+			ID:            artist.ID,
+			MaxTopTracts:  15,
+			MaxRelArtist:  0,
+			IncludeAlbums: false,
+		}
+		artist, err = g.GetArtistInfo(params)
+		if err != nil {
+			log.Printf("could not get artist info for %s, error: %v", artist.Name, err)
+			continue
+		}
+
+		list[i] = artist
+	}
+
+	return list, err
 }

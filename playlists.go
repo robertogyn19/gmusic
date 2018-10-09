@@ -2,6 +2,7 @@ package gmusic
 
 import (
 	"encoding/json"
+	"net/http"
 	"strings"
 
 	"github.com/satori/go.uuid"
@@ -142,7 +143,7 @@ func (g *GMusic) CreatePlaylist(cparams CreatePlaylistParams) (PlaylistMutateRes
 	mutations := CreateMutations{Mutations: array}
 	var playlist PlaylistMutateResponse
 
-	r, err := g.sjRequest("POST", "playlistbatch", mutations)
+	r, err := g.sjRequest(http.MethodPost, "playlistbatch", mutations)
 
 	if err != nil {
 		return playlist, err
@@ -229,7 +230,7 @@ func (g *GMusic) AddSongsToPlaylist(pid string, trackIds []string) (PlaylistMuta
 
 	mutations := CreateMutations{Mutations: entries}
 
-	r, err := g.sjRequest("POST", "plentriesbatch?alt=json", mutations)
+	r, err := g.sjRequest(http.MethodPost, "plentriesbatch?alt=json", mutations)
 
 	if err != nil {
 		return PlaylistMutateResponse{}, err
