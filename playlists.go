@@ -52,7 +52,7 @@ type PlaylistEntry struct {
 }
 
 func (g *GMusic) ListPlaylists() ([]*Playlist, error) {
-	r, err := g.sjRequest("POST", "playlistfeed", nil)
+	r, err := g.sjRequest(http.MethodPost, "playlistfeed", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (g *GMusic) ListPlaylists() ([]*Playlist, error) {
 }
 
 func (g *GMusic) ListPlaylistEntries() ([]*PlaylistEntry, error) {
-	r, err := g.sjRequest("POST", "plentryfeed", nil)
+	r, err := g.sjRequest(http.MethodPost, "plentryfeed", nil)
 	if err != nil {
 		return nil, err
 	}
