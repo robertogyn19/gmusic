@@ -157,6 +157,10 @@ func (g *GMusic) CreatePlaylist(cparams CreatePlaylistParams) (PlaylistMutateRes
 		return playlist, err
 	}
 
+	if len(data["mutate_respponse"]) == 0 {
+		return PlaylistMutateResponse{}, nil
+	}
+
 	return data["mutate_response"][0], nil
 }
 

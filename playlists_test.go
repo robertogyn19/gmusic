@@ -8,7 +8,7 @@ import (
 	"gopkg.in/h2non/gock.v1"
 )
 
-func TestGMusic_CreatePlaylist(t *testing.T) {
+func TestGMusic_CreatePlaylistWithEmptyBody(t *testing.T) {
 	defer gock.Off()
 	gock.DisableNetworking()
 
@@ -25,5 +25,5 @@ func TestGMusic_CreatePlaylist(t *testing.T) {
 
 	pmr, err := gtest.CreatePlaylist(params)
 	assert.NoError(t, err)
-	assert.NotEmpty(t, pmr.ResponseCode)
+	assert.Empty(t, pmr.ResponseCode)
 }
