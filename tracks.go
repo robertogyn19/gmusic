@@ -60,7 +60,11 @@ func (g *GMusic) ListTracks() ([]*Track, error) {
 		var data ListTracks
 		defer r.Body.Close()
 
-		body, _ := ioutil.ReadAll(r.Body)
+		body, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return nil, err
+		}
+
 		if err := json.Unmarshal(body, &data); err != nil {
 			return nil, err
 		}
